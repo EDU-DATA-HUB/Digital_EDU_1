@@ -1,0 +1,128 @@
+{% load static %}
+{% if request.user.is_authenticated %}
+  {% include 'base/base_with_sidebar.html' %}
+{% else %}
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Mini LMS{% endblock %}</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="{% static 'images/lock.png' %}">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#111827',
+            secondary: '#4b5563',
+            accent: '#2563eb',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- CKEditor (for rich text editing) -->
+  {% block extra_head %}{% endblock %}
+
+  <!-- Custom notification styles -->
+  <style>
+    #popup-message-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 400px;
+    }
+
+    .popup-message {
+      padding: 16px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      font-size: 14px;
+      font-weight: 500;
+      color: white;
+      display: none;
+    }
+
+    .popup-message.success {
+      background-color: #059669;
+    }
+
+    .popup-message.error {
+      background-color: #dc2626;
+    }
+
+    .popup-message.info {
+      background-color: #2563eb;
+    }
+
+    .popup-message.warning {
+      background-color: #d97706;
+    }
+  </style>
+</head>
+
+<body class="h-full bg-gray-50 text-gray-900 antialiased">
+
+  <!-- Popup Messages Container -->
+  <div id="popup-message-container"></div>
+
+  <!-- Login Page Layout (No Sidebar) -->
+  <div class="flex min-h-screen flex-col">
+    <main class="flex-1">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-6">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <p class="text-center text-sm text-gray-600">
+          &copy; 2024 Muhammad Zaid. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    {% if messages %}
+    document.addEventListener('DOMContentLoaded', function() {
+      const container = document.getElementById('popup-message-container');
+      {% for message in messages %}
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'popup-message {{ message.tags }}';
+      messageDiv.textContent = '{{ message }}';
+      messageDiv.style.display = 'block';
+      container.appendChild(messageDiv);
+
+      setTimeout(() => {
+        messageDiv.style.display = 'none';
+        messageDiv.remove();
+      }, 3000);
+      {% endfor %}
+    });
+    {% endif %}
+  </script>
+</body>
+
+</html>
+{% endif %}
